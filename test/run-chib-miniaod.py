@@ -1,4 +1,4 @@
-input_filename = '/store/data/Run2017B/MuOnia/MINIAOD/PromptReco-v1/000/297/723/00000/9040368C-DE5E-E711-ACFF-02163E0134FF.root'
+#input_filename = '/store/data/Run2017B/MuOnia/MINIAOD/PromptReco-v1/000/297/723/00000/9040368C-DE5E-E711-ACFF-02163E0134FF.root'
 ouput_filename = 'rootuple.root'
 
 import FWCore.ParameterSet.Config as cms
@@ -9,13 +9,20 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.Reconstruction_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '92X_dataRun2_Prompt_v4', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '92X_dataRun2_Prompt_v9', '')
 
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 20000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
-process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring(input_filename))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10000))
+
+process.source = cms.Source("PoolSource",fileNames = cms.untracked.vstring(
+#'/store/data/Run2017C/MuOnia/MINIAOD/PromptReco-v1/000/299/368/00000/FA04E254-876D-E711-A303-02163E0128D1.root',
+#'/store/data/Run2017D/MuOnia/MINIAOD/PromptReco-v1/000/302/031/00000/0E919B66-3B8F-E711-B6B4-02163E0144E5.root',
+'/store/data/Run2017E/MuOnia/MINIAOD/PromptReco-v1/000/303/817/00000/F24D6405-8EA2-E711-9303-02163E01A28F.root',
+#'/store/data/Run2017F/MuOnia/MINIAOD/PromptReco-v1/000/305/040/00000/26C723C4-25B2-E711-A70D-02163E01A64C.root',
+	)
+)
 process.TFileService = cms.Service("TFileService",fileName = cms.string(ouput_filename))
 process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False))
 
@@ -30,7 +37,8 @@ process.oniaSelectedMuons = cms.EDFilter('PATMuonSelector',
                     ' && innerTrack.hitPattern.trackerLayersWithMeasurement > 5'
                     ' && innerTrack.hitPattern.pixelLayersWithMeasurement > 0'
                     ' && innerTrack.quality(\"highPurity\")'
-                    ' && (abs(eta) <= 1.4 && pt > 4.)'
+                    ' && (pt > 4.)'
+                    #' && (abs(eta) <= 1.4 && pt > 4.)'
    ),
    filter = cms.bool(True)
 )
@@ -46,7 +54,8 @@ process.onia2MuMuPAT.addMCTruth = cms.bool(False)
 
 process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
                                         triggerConditions = cms.vstring('HLT_Dimuon10_Upsilon_Barrel_Seagulls_v*',
-                                                                        'HLT_Dimuon12_Upsilon_eta1p5_v*'
+                                                                        'HLT_Dimuon12_Upsilon_eta1p5_v*',
+                                                                        'HLT_Dimuon24_Upsilon_noCorrL1_v*'
                                                                        ),
                                         hltResults = cms.InputTag( "TriggerResults", "", "HLT" ),
                                         l1tResults = cms.InputTag( "" ),
@@ -56,11 +65,13 @@ process.triggerSelection = cms.EDFilter("TriggerResultsFilter",
 process.Onia2MuMuFiltered = cms.EDProducer('DiMuonFilter',
       OniaTag             = cms.InputTag("onia2MuMuPAT"),
       singlemuonSelection = cms.string(""),
-      dimuonSelection     = cms.string("8.6 < mass && mass < 11.4 && pt > 10. && abs(y) < 1.2 && charge==0 && userFloat('vProb') > 0.01"),
+      #dimuonSelection     = cms.string("8.6 < mass && mass < 11.4 && pt > 10. && abs(y) < 1.2 && charge==0 && userFloat('vProb') > 0.01"),
+      dimuonSelection     = cms.string("8.6 < mass && mass < 11.4 && pt > 10. && charge==0 && userFloat('vProb') > 0.01"),
       do_trigger_match    = cms.bool(True),
       HLTFilters          = cms.vstring(
                 'hltDisplacedmumuFilterDimuon10UpsilonBarrelnoCow',
-                'hltDisplacedmumuFilterDimuon12Upsilons'
+                'hltDisplacedmumuFilterDimuon12Upsilons',
+                'hltDisplacedmumuFilterDimuon24UpsilonsNoCorrL1'
                           ),
 )
 
