@@ -26,6 +26,7 @@
 #include <sstream>
 
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/Math/interface/Point3D.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
@@ -58,7 +59,9 @@ class chibRootupler:public edm::EDAnalyzer {
 	TLorentzVector dimuon_p4;
 	TLorentzVector muonP_p4;
 	TLorentzVector muonM_p4;
-	TLorentzVector photon_p4;
+  TLorentzVector photon_p4;
+  //TLorentzVector ele_trk0;
+  //TLorentzVector ele_trk1;
 
 	TLorentzVector rf1S_chi_p4,rf2S_chi_p4,rf3S_chi_p4;
 	Double_t invm1S,invm2S,invm3S;
@@ -69,7 +72,10 @@ class chibRootupler:public edm::EDAnalyzer {
 	Double_t ele_higherPt_pt;
 	Double_t ctpv;
 	Double_t ctpv_error;
-	Double_t conv_vertex;
+  Double_t conv_vertex;
+  //Double_t conv_vertex_doubleEle;
+  Double_t conv_vertex_doubleEle_trk0;
+  Double_t conv_vertex_doubleEle_trk1;
 	Double_t dz;
 
 	UInt_t photon_flags;
@@ -155,6 +161,9 @@ isMC_(iConfig.getParameter < bool > ("isMC"))
     chib_tree->Branch("ctpv",         &ctpv,         "ctpv/D");
     chib_tree->Branch("ctpv_error",   &ctpv_error,   "ctpv_error/D");
     chib_tree->Branch("conv_vertex",  &conv_vertex,  "conv_vertex/D");
+    //chib_tree->Branch("conv_vertex_doubleEle",  &conv_vertex_doubleEle,  "conv_vertex_doubleEle/D");
+    chib_tree->Branch("conv_vertex_doubleEle_trk0",  &conv_vertex_doubleEle_trk0,  "conv_vertex_doubleEle_trk0/D");
+    chib_tree->Branch("conv_vertex_doubleEle_trk1",  &conv_vertex_doubleEle_trk1,  "conv_vertex_doubleEle_trk1/D");
     chib_tree->Branch("dz",           &dz,           "dz/D");
 
     chib_tree->Branch("photon_flags", &photon_flags, "photon_flags/i");
@@ -293,11 +302,11 @@ void chibRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
    trigger = 0;
    if (triggerResults_handle.isValid()) {
       const edm::TriggerNames & TheTriggerNames = iEvent.triggerNames(*triggerResults_handle);
-      unsigned int NTRIGGERS = 7;
+      unsigned int NTRIGGERS = 8;
       std::string TriggersToTest[NTRIGGERS] = {
 	      "HLT_Dimuon20_Jpsi_Barrel_Seagulls","HLT_Dimuon25_Jpsi",
 	      "HLT_Dimuon10_PsiPrime_Barrel_Seagulls","HLT_Dimuon18_PsiPrime",
-	      "HLT_Dimuon10_Upsilon_Barrel_Seagulls","HLT_Dimuon12_Upsilon_eta1p5","HLT_Dimuon14_Phi_Barrel_Seagulls"};
+	      "HLT_Dimuon10_Upsilon_Barrel_Seagulls","HLT_Dimuon12_Upsilon_eta1p5","HLT_Dimuon14_Phi_Barrel_Seagulls","HLT_Dimuon24_Upsilon_noCorrL1"};
 
       for (unsigned int i = 0; i < NTRIGGERS; i++) {
          for (int version = 1; version < 19; version++) {
@@ -359,7 +368,37 @@ void chibRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
 	   ctpv_error = (dynamic_cast < pat::CompositeCandidate * >(chi_cand.daughter("dimuon")))->userFloat("ppdlErrPV");
 	   photon_flags = (UInt_t) dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userInt("flags");
 
-	   conv_vertex = chi_cand.daughter("photon")->vertex().rho();
+     conv_vertex = chi_cand.daughter("photon")->vertex().rho();
+
+     /*Bool_t compVtx = false;
+
+     Double_t ele1_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().x();
+     Double_t ele2_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().x();
+     
+     std::cout<<std::endl;
+     std::cout<<" ==========> "<< ele1_vtxX <<" ===========> "<< ele2_vtxX <<std::endl;
+
+     Double_t ele1_vtxY = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().y();
+     Double_t ele2_vtxY = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().y();
+
+     Double_t ele1_vtxZ = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().z();
+     Double_t ele2_vtxZ = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().z();
+
+     if(ele1_vtxX == ele2_vtxX && ele1_vtxY == ele2_vtxY && ele1_vtxZ == ele2_vtxZ) compVtx = true; 
+
+     Double_t ele1_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().();
+     Double_t ele2_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().();*/
+
+     Double_t ele1_vtxRho = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().rho();
+     Double_t ele2_vtxRho = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().rho();
+
+     //conv_vertex_doubleEle = chi_cand.daughter("photon")->daughter("electron1")->vertex().rho();
+     //if (compVtx == true) conv_vertex_doubleEle_trk0 = ele1_vtxRho;
+     //if (compVtx == true) conv_vertex_doubleEle_trk1 = ele2_vtxRho;
+
+     conv_vertex_doubleEle_trk0 = ele1_vtxRho;
+     conv_vertex_doubleEle_trk1 = ele2_vtxRho;
+
 	   dz = chi_cand.userFloat("dz");
 
 	   // 2012 parameterization
