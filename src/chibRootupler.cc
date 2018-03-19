@@ -26,7 +26,6 @@
 #include <sstream>
 
 #include "DataFormats/VertexReco/interface/Vertex.h"
-#include "DataFormats/Math/interface/Point3D.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
@@ -73,9 +72,9 @@ class chibRootupler:public edm::EDAnalyzer {
 	Double_t ctpv;
 	Double_t ctpv_error;
   Double_t conv_vertex;
-  //Double_t conv_vertex_doubleEle;
-  Double_t conv_vertex_doubleEle_trk0;
-  Double_t conv_vertex_doubleEle_trk1;
+  Double_t conv_vertex_x;
+  Double_t conv_vertex_y;
+  Double_t conv_vertex_z;
 	Double_t dz;
 
 	UInt_t photon_flags;
@@ -161,9 +160,9 @@ isMC_(iConfig.getParameter < bool > ("isMC"))
     chib_tree->Branch("ctpv",         &ctpv,         "ctpv/D");
     chib_tree->Branch("ctpv_error",   &ctpv_error,   "ctpv_error/D");
     chib_tree->Branch("conv_vertex",  &conv_vertex,  "conv_vertex/D");
-    //chib_tree->Branch("conv_vertex_doubleEle",  &conv_vertex_doubleEle,  "conv_vertex_doubleEle/D");
-    chib_tree->Branch("conv_vertex_doubleEle_trk0",  &conv_vertex_doubleEle_trk0,  "conv_vertex_doubleEle_trk0/D");
-    chib_tree->Branch("conv_vertex_doubleEle_trk1",  &conv_vertex_doubleEle_trk1,  "conv_vertex_doubleEle_trk1/D");
+    chib_tree->Branch("conv_vertex_x",  &conv_vertex_x,  "conv_vertex_x/D");
+    chib_tree->Branch("conv_vertex_y",  &conv_vertex_y,  "conv_vertex_y/D");
+    chib_tree->Branch("conv_vertex_z",  &conv_vertex_z,  "conv_vertex_z/D");
     chib_tree->Branch("dz",           &dz,           "dz/D");
 
     chib_tree->Branch("photon_flags", &photon_flags, "photon_flags/i");
@@ -369,35 +368,9 @@ void chibRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
 	   photon_flags = (UInt_t) dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userInt("flags");
 
      conv_vertex = chi_cand.daughter("photon")->vertex().rho();
-
-     /*Bool_t compVtx = false;
-
-     Double_t ele1_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().x();
-     Double_t ele2_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().x();
-     
-     std::cout<<std::endl;
-     std::cout<<" ==========> "<< ele1_vtxX <<" ===========> "<< ele2_vtxX <<std::endl;
-
-     Double_t ele1_vtxY = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().y();
-     Double_t ele2_vtxY = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().y();
-
-     Double_t ele1_vtxZ = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().z();
-     Double_t ele2_vtxZ = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().z();
-
-     if(ele1_vtxX == ele2_vtxX && ele1_vtxY == ele2_vtxY && ele1_vtxZ == ele2_vtxZ) compVtx = true; 
-
-     Double_t ele1_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().();
-     Double_t ele2_vtxX = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().();*/
-
-     Double_t ele1_vtxRho = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track0"))->vertex().rho();
-     Double_t ele2_vtxRho = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userData<reco::Track>("track1"))->vertex().rho();
-
-     //conv_vertex_doubleEle = chi_cand.daughter("photon")->daughter("electron1")->vertex().rho();
-     //if (compVtx == true) conv_vertex_doubleEle_trk0 = ele1_vtxRho;
-     //if (compVtx == true) conv_vertex_doubleEle_trk1 = ele2_vtxRho;
-
-     conv_vertex_doubleEle_trk0 = ele1_vtxRho;
-     conv_vertex_doubleEle_trk1 = ele2_vtxRho;
+     conv_vertex_x = chi_cand.daughter("photon")->vertex().x();
+     conv_vertex_y = chi_cand.daughter("photon")->vertex().y();
+     conv_vertex_z = chi_cand.daughter("photon")->vertex().z();
 
 	   dz = chi_cand.userFloat("dz");
 
