@@ -58,28 +58,28 @@ class chibRootupler:public edm::EDAnalyzer {
 	TLorentzVector dimuon_p4;
 	TLorentzVector muonP_p4;
 	TLorentzVector muonM_p4;
-  TLorentzVector photon_p4;
-  TLorentzVector ele_trk0;
-  TLorentzVector ele_trk1;
+  	TLorentzVector photon_p4;
+  	TLorentzVector ele_trk0;
+  	TLorentzVector ele_trk1;
 
 	TLorentzVector rf1S_chi_p4,rf2S_chi_p4,rf3S_chi_p4;
 	Double_t invm1S,invm2S,invm3S;
         Double_t probFit1S,probFit2S,probFit3S;
 	Double_t y1S_nsigma,y2S_nsigma,y3S_nsigma;
 
-  Double_t ele_mass;
+  	Double_t ele_mass;
 	Double_t ele_lowerPt_pt;
 	Double_t ele_higherPt_pt;
 	Double_t ctpv;
 	Double_t ctpv_error;
-  Double_t conv_vertex;
-  Double_t conv_vertex_x;
-  Double_t conv_vertex_y;
-  Double_t conv_vertex_z;
-  Double_t conv_vertex_r;
-  Double_t conv_vertex_eta;
-  Double_t conv_vertex_theta;
-  Double_t conv_vertex_phi;
+  	Double_t conv_vertex;
+  	Double_t conv_vertex_x;
+  	Double_t conv_vertex_y;
+  	Double_t conv_vertex_z;
+  	Double_t conv_vertex_r;
+  	Double_t conv_vertex_eta;
+  	Double_t conv_vertex_theta;
+  	Double_t conv_vertex_phi;
 	Double_t dz;
 
 	UInt_t photon_flags;
@@ -362,17 +362,17 @@ void chibRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
 	   muonP_p4.SetPtEtaPhiM(vP.pt(), vP.eta(), vP.phi(), vP.mass());
 	   muonM_p4.SetPtEtaPhiM(vM.pt(), vM.eta(), vM.phi(), vM.mass());
 
-     Double_t ele1_pt = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
+     	   Double_t ele1_pt = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
                                     userData<reco::Track>("track0"))->pt();
-     Double_t ele2_pt = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
+     	   Double_t ele2_pt = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
                                     userData<reco::Track>("track1"))->pt();
-     Double_t ele1_eta = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
+     	   Double_t ele1_eta = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
                                     userData<reco::Track>("track0"))->eta();
-     Double_t ele2_eta = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
+     	   Double_t ele2_eta = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
                                     userData<reco::Track>("track1"))->eta();
-     Double_t ele1_phi = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
+     	   Double_t ele1_phi = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
                                     userData<reco::Track>("track0"))->phi();
-     Double_t ele2_phi = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
+     	   Double_t ele2_phi = (dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->
                                     userData<reco::Track>("track1"))->phi();
 
 	   if (ele1_pt > ele2_pt) {
@@ -383,21 +383,21 @@ void chibRootupler::analyze(const edm::Event & iEvent, const edm::EventSetup & i
 	      ele_lowerPt_pt = ele1_pt;
 	   }
 
-     ele_trk0.SetPtEtaPhiM(ele1_pt, ele1_eta, ele1_phi, ele_mass);
-     ele_trk1.SetPtEtaPhiM(ele2_pt, ele2_eta, ele2_phi, ele_mass);
+     	   ele_trk0.SetPtEtaPhiM(ele1_pt, ele1_eta, ele1_phi, ele_mass);
+     	   ele_trk1.SetPtEtaPhiM(ele2_pt, ele2_eta, ele2_phi, ele_mass);
 
 	   ctpv = (dynamic_cast < pat::CompositeCandidate * >(chi_cand.daughter("dimuon")))->userFloat("ppdlPV");
 	   ctpv_error = (dynamic_cast < pat::CompositeCandidate * >(chi_cand.daughter("dimuon")))->userFloat("ppdlErrPV");
 	   photon_flags = (UInt_t) dynamic_cast<const pat::CompositeCandidate *>(chi_cand.daughter("photon"))->userInt("flags");
 
-     conv_vertex = chi_cand.daughter("photon")->vertex().rho();
-     conv_vertex_x = chi_cand.daughter("photon")->vertex().x();
-     conv_vertex_y = chi_cand.daughter("photon")->vertex().y();
-     conv_vertex_z = chi_cand.daughter("photon")->vertex().z();
-     conv_vertex_r = chi_cand.daughter("photon")->vertex().r();
-     conv_vertex_eta = chi_cand.daughter("photon")->vertex().eta();
-     conv_vertex_phi = chi_cand.daughter("photon")->vertex().phi();
-     conv_vertex_theta = chi_cand.daughter("photon")->vertex().theta();
+     	   conv_vertex = chi_cand.daughter("photon")->vertex().rho();
+     	   conv_vertex_x = chi_cand.daughter("photon")->vertex().x();
+     	   conv_vertex_y = chi_cand.daughter("photon")->vertex().y();
+     	   conv_vertex_z = chi_cand.daughter("photon")->vertex().z();
+     	   conv_vertex_r = chi_cand.daughter("photon")->vertex().r();
+     	   conv_vertex_eta = chi_cand.daughter("photon")->vertex().eta();
+     	   conv_vertex_phi = chi_cand.daughter("photon")->vertex().phi();
+     	   conv_vertex_theta = chi_cand.daughter("photon")->vertex().theta();
 
 	   dz = chi_cand.userFloat("dz");
 
