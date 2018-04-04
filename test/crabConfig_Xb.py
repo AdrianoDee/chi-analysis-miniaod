@@ -28,7 +28,7 @@ eventsPerJob = [
 20
 ]
 
-datasetName = datasetnames[7]
+datasetName = datasetnames[6]
 runNum = runNumber[0]
 lumi = jsonfile[1]
 epj = eventsPerJob[0]
@@ -40,7 +40,7 @@ dataset = filter(None, datasetName.split('/'))
 
 config.section_('General')
 config.General.transferOutputs  = True
-config.General.workArea         = 'ChiB_v1'
+config.General.workArea         = 'ChiB_v3'
 config.General.requestName      = dataset[0]+'_'+dataset[1]+'_'+dataset[2]+'_'+runNum+timestamp
 config.General.transferLogs     = False
 
@@ -60,7 +60,7 @@ config.Data.unitsPerJob         = epj
 config.Data.splitting           = 'LumiBased'
 config.Data.runRange            = runNum
 config.Data.lumiMask            = lumi
-config.Data.outLFNDirBase       = '/store/user/slezki/ChiB_v1'
+config.Data.outLFNDirBase       = '/store/user/slezki/ChiB_v3'
 config.Data.publication         = False
 #config.Data.ignoreLocality      = True
 
